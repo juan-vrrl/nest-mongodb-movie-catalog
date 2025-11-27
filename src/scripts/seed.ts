@@ -1,11 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
-import { MovieSeeder } from '../database/seeders/movie.seeder';
+import { MovieSeeder } from '../movies/seeder/movie.seeder';
+import { TmdbService } from '../movies/tmdb.service';
+import { MoviesService } from '../movies/movies.service';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
-  const seeder = app.get(MovieSeeder);
+  // Get dependencies and create seeder manually
+  const tmdbService = app.get(TmdbService);
+  const moviesService = app.get(MoviesService);
+  const seeder = new MovieSeeder(tmdbService, moviesService);
 
   const command = process.argv[2];
   const pages = parseInt(process.argv[3]) || 5;

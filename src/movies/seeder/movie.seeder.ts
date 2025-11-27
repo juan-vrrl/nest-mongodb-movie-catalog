@@ -1,7 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TmdbService, TmdbMovie } from '../../movies/tmdb.service';
-import { MoviesService } from '../../movies/movies.service';
-import { Movie } from '../../movies/schemas/movie.schema';
+import { TmdbService } from '../tmdb.service';
+import { MoviesService } from '../movies.service';
+import { Movie } from '../schemas/movie.schema';
+
+interface TmdbMovie {
+  title: string;
+  overview: string;
+  genre_ids: number[];
+  release_date: string;
+  poster_path: string;
+  backdrop_path: string;
+  id: number;
+  vote_average: number;
+}
 
 interface MovieWithId extends Movie {
   _id: { toString: () => string };
@@ -20,6 +31,16 @@ export class MovieSeeder {
     this.logger.log('Starting movie seeding...');
 
     try {
+      // Fetch all existing movies once at the start
+      const existingMovies =
+        (await this.moviesService.findAll()) as MovieWithId[];
+      const existingTmdbIds = new Set(
+        existingMovies.map((movie) => movie.tmdbId),
+      );
+      this.logger.log(
+        `Found ${existingTmdbIds.size} existing movies in database`,
+      );
+
       for (let page = 1; page <= pages; page++) {
         this.logger.log(`Fetching page ${page} from TMDB...`);
 
@@ -28,14 +49,8 @@ export class MovieSeeder {
 
         for (const tmdbMovie of tmdbMovies) {
           try {
-            // Check if movie already exists by tmdbId
-            const existingMovies =
-              (await this.moviesService.findAll()) as MovieWithId[];
-            const exists = existingMovies.some(
-              (movie) => movie.tmdbId === tmdbMovie.id,
-            );
-
-            if (exists) {
+            // Check if movie already exists using the Set (O(1) lookup)
+            if (existingTmdbIds.has(tmdbMovie.id)) {
               this.logger.debug(
                 `Movie "${tmdbMovie.title}" already exists, skipping...`,
               );
@@ -45,6 +60,8 @@ export class MovieSeeder {
             // Map and create movie
             const movieData = this.tmdbService.mapToMovieSchema(tmdbMovie);
             await this.moviesService.create(movieData);
+            // Add to Set to prevent duplicates within same seeding run
+            existingTmdbIds.add(tmdbMovie.id);
             this.logger.log(`Created movie: ${tmdbMovie.title}`);
           } catch (error) {
             this.logger.error(
