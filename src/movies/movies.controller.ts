@@ -9,11 +9,16 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { QueryMovieDto } from './dto/query-movie.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../users/schemas/user.schema';
 
 @Controller('movies')
 export class MoviesController {
@@ -43,6 +48,8 @@ export class MoviesController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() body: CreateMovieDto) {
     const movie = await this.moviesService.create(body);
@@ -54,6 +61,8 @@ export class MoviesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() body: UpdateMovieDto) {
     const movie = await this.moviesService.update(id, body);
@@ -65,6 +74,8 @@ export class MoviesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string) {
     const movie = await this.moviesService.remove(id);
