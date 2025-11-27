@@ -33,7 +33,7 @@ export class MovieSeeder {
     try {
       // Fetch all existing movies once at the start
       const existingMovies =
-        (await this.moviesService.findAll()) as MovieWithId[];
+        (await this.moviesService.findAllWithoutPagination()) as MovieWithId[];
       const existingTmdbIds = new Set(
         existingMovies.map((movie) => movie.tmdbId),
       );
@@ -82,7 +82,8 @@ export class MovieSeeder {
   async clear(): Promise<void> {
     this.logger.log('Clearing all movies from database...');
     try {
-      const movies = (await this.moviesService.findAll()) as MovieWithId[];
+      const movies =
+        (await this.moviesService.findAllWithoutPagination()) as MovieWithId[];
       for (const movie of movies) {
         const movieId: string = movie._id.toString();
         await this.moviesService.remove(movieId);

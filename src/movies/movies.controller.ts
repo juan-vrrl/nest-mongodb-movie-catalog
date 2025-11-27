@@ -8,10 +8,12 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { QueryMovieDto } from './dto/query-movie.dto';
 
 @Controller('movies')
 export class MoviesController {
@@ -19,8 +21,8 @@ export class MoviesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAll() {
-    const movies = await this.moviesService.findAll();
+  async getAll(@Query() query: QueryMovieDto) {
+    const movies = await this.moviesService.findAll(query);
 
     return {
       message: 'Movies retrieved successfully',
