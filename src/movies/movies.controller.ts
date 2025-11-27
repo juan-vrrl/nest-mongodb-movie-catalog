@@ -22,11 +22,12 @@ export class MoviesController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAll(@Query() query: QueryMovieDto) {
-    const movies = await this.moviesService.findAll(query);
+    const { movies, metadata } = await this.moviesService.findAll(query);
 
     return {
       message: 'Movies retrieved successfully',
       data: movies,
+      metadata,
     };
   }
 

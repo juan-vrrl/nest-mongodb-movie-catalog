@@ -12,12 +12,14 @@ export interface FindAllOptions {
   limit?: number;
 }
 
-export interface PaginatedResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+export interface PaginatedResult {
+  movies: Movie[];
+  metadata: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 @Injectable()
@@ -29,7 +31,7 @@ export class MoviesService {
 
   private readonly logger = new Logger(MoviesService.name);
 
-  async findAll(options: FindAllOptions = {}): Promise<PaginatedResult<Movie>> {
+  async findAll(options: FindAllOptions = {}): Promise<PaginatedResult> {
     try {
       const {
         search,
@@ -66,11 +68,13 @@ export class MoviesService {
       ]);
 
       return {
-        data: movies,
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        movies,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
       };
     } catch (error) {
       this.logger.error('Failed to retrieve movies', error);
