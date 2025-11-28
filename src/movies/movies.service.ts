@@ -92,9 +92,23 @@ export class MoviesService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, includeReviews = true) {
     try {
-      const movie = await this.movieModel.findById(id).exec();
+      const query = this.movieModel.findById(id);
+
+      // Only populate reviews if requested
+      if (includeReviews) {
+        query.populate({
+          path: 'reviews',
+          select: 'rating comment createdAt',
+          populate: {
+            path: 'user',
+            select: 'name email',
+          },
+        });
+      }
+
+      const movie = await query.exec();
       return movie;
     } catch (error) {
       this.logger.error(`Failed to retrieve movie with id ${id}`, error);

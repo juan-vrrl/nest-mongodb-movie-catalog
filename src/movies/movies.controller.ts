@@ -38,8 +38,12 @@ export class MoviesController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getOne(@Param('id') id: string) {
-    const movie = await this.moviesService.findOne(id);
+  async getOne(
+    @Param('id') id: string,
+    @Query('includeReviews') includeReviews?: string,
+  ) {
+    const shouldIncludeReviews = includeReviews !== 'false';
+    const movie = await this.moviesService.findOne(id, shouldIncludeReviews);
 
     return {
       message: 'Movie retrieved successfully',

@@ -4,17 +4,12 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() registerDto: RegisterDto) {
-    const result = await this.authService.register(
-      registerDto.email,
-      registerDto.password,
-      registerDto.name,
-      registerDto.role,
-    );
+  async register(@Body() body: RegisterDto) {
+    const result = await this.authService.register(body);
 
     return {
       message: 'User registered successfully',
@@ -24,11 +19,8 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(
-      loginDto.email,
-      loginDto.password,
-    );
+  async login(@Body() body: LoginDto) {
+    const result = await this.authService.login(body);
 
     return {
       message: 'Login successful',

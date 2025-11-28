@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type MovieDocument = HydratedDocument<Movie>;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } })
 export class Movie {
   @Prop({ required: true })
   title: string;
@@ -28,6 +28,15 @@ export class Movie {
 
   @Prop()
   rating: number;
+
+  reviews?: any[];
 }
 
 export const MovieSchema = SchemaFactory.createForClass(Movie);
+
+// Virtual field to populate reviews
+MovieSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'movie',
+});
