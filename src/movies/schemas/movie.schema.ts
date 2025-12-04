@@ -3,7 +3,11 @@ import { HydratedDocument } from 'mongoose';
 
 export type MovieDocument = HydratedDocument<Movie>;
 
-@Schema({ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class Movie {
   @Prop({ required: true })
   title: string;
