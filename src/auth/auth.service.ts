@@ -78,6 +78,15 @@ export class AuthService {
   }
 
   async validateUser(payload: JwtPayload): Promise<User | null> {
-    return await this.usersService.findById(payload.sub);
+    try {
+      const user = await this.usersService.findById(payload.sub);
+      if (!user) {
+        console.log(`[AuthService] User not found with ID: ${payload.sub}`);
+      }
+      return user;
+    } catch (error) {
+      console.error('[AuthService] Error validating user:', error);
+      return null;
+    }
   }
 }
