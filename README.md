@@ -23,7 +23,121 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A full-featured **Movie Catalog REST API** built as a personal project to improve skills in NestJS and MongoDB. This application provides a complete backend system for managing movies, user authentication, and movie reviews with data seeded from The Movie Database (TMDB) API.
+
+### 🎯 Project Goals
+- Learn and implement NestJS best practices
+- Master MongoDB with Mongoose ODM
+- Understand JWT authentication and authorization
+- Practice building RESTful APIs with proper architecture
+- Implement real-world features like pagination, filtering, and search
+
+### ✨ Key Features
+
+#### 🎬 Movie Management
+- Browse movies with pagination, search, and filtering by genre
+- Sort by title, rating, or release date
+- View detailed movie information with reviews
+- Admin-only movie creation, updates, and deletion
+- Auto-populate database with popular movies from TMDB API
+
+#### 👤 User Authentication & Authorization
+- JWT-based authentication with secure password hashing (bcrypt)
+- User registration and login
+- Role-based access control (Admin/User roles)
+- Protected routes with authentication guards
+
+#### ⭐ Review System
+- Users can leave reviews for movies (rating 1-5 + comment)
+- One review per user per movie (enforced by compound index)
+- Update and delete own reviews
+- View reviews by movie or by user
+- Admins can delete any review
+- Reviews automatically populated when fetching movie details
+
+#### 🔧 Additional Features
+- TMDB API integration for automatic movie data seeding
+- Flexible review inclusion (optional population for performance)
+- Global validation with DTOs and class-validator
+- Consistent error handling and response format
+- CORS enabled for frontend integration
+- Environment-based configuration
+
+### 🛠️ Tech Stack
+
+**Backend Framework:**
+- **NestJS** - Progressive Node.js framework with TypeScript
+- **TypeScript** - Type-safe development
+
+**Database:**
+- **MongoDB** - NoSQL document database
+- **Mongoose** - Elegant MongoDB object modeling
+
+**Authentication:**
+- **JWT (JSON Web Tokens)** - Secure authentication
+- **Passport.js** - Authentication middleware
+- **bcrypt** - Password hashing
+
+**Validation & Transformation:**
+- **class-validator** - Decorator-based validation
+- **class-transformer** - Object transformation
+
+**External APIs:**
+- **TMDB API** - The Movie Database for movie data
+- **Axios** - HTTP client for API requests
+
+**Development Tools:**
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **Jest** - Testing framework
+
+### 📁 Project Structure
+```
+src/
+├── auth/              # Authentication & authorization
+│   ├── guards/        # JWT & roles guards
+│   ├── decorators/    # Custom decorators (@CurrentUser, @Roles)
+│   └── strategies/    # Passport JWT strategy
+├── users/             # User management
+├── movies/            # Movie CRUD operations
+│   ├── seeder/        # TMDB data seeding
+│   └── tmdb.service/  # TMDB API integration
+├── reviews/           # Review system
+└── database/          # Database configurations
+```
+
+### 🚀 API Endpoints
+
+**Authentication:**
+- `POST /auth/register` - Create new user account
+- `POST /auth/login` - Login and get JWT token
+
+**Movies:**
+- `GET /movies` - Browse movies (pagination, search, filter, sort)
+- `GET /movies/:id` - Get movie details with reviews
+- `POST /movies` - Create movie (admin only)
+- `PATCH /movies/:id` - Update movie (admin only)
+- `DELETE /movies/:id` - Delete movie (admin only)
+
+**Reviews:**
+- `POST /reviews` - Create review (authenticated users)
+- `GET /reviews` - Get all reviews (optional movieId filter)
+- `GET /reviews/my-reviews` - Get current user's reviews
+- `GET /reviews/:id` - Get specific review
+- `PATCH /reviews/:id` - Update own review
+- `DELETE /reviews/:id` - Delete own review (or admin deletes any)
+
+### 🌱 Database Seeding
+```bash
+# Seed 5 pages of popular movies from TMDB
+npm run seed
+
+# Clear all movies
+npm run seed:clear
+
+# Clear and reseed
+npm run seed:reseed
+```
 
 ## Project setup
 
@@ -43,56 +157,3 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
